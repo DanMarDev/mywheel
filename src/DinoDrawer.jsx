@@ -4,8 +4,7 @@ const GAME_URL = `${import.meta.env.BASE_URL}dino/index.html`;
 
 // A slide-out side drawer with Chrome's Dino Run game (served from public/dino/).
 // The game runs in an iframe so its global script and styles stay isolated.
-function DinoDrawer() {
-  const [open, setOpen] = useState(false);
+function DinoDrawer({ open, onOpenChange: setOpen }) {
   const [loaded, setLoaded] = useState(false);
   const frameRef = useRef(null);
   const tabRef = useRef(null);
@@ -18,7 +17,7 @@ function DinoDrawer() {
     game.setDinoEnabled?.(open);
     game.onDinoEscape = () => setOpen(false);
     if (open) game.focus();
-  }, [open]);
+  }, [open, setOpen]);
 
   useEffect(() => {
     syncGame();
@@ -49,21 +48,23 @@ function DinoDrawer() {
     const types = ['keydown', 'keyup', 'keypress'];
     types.forEach((type) => window.addEventListener(type, isolateKey, true));
     return () => types.forEach((type) => window.removeEventListener(type, isolateKey, true));
-  }, [open]);
+  }, [open, setOpen]);
+
+  // Load the game the first time the drawer opens
+  if (open && !loaded) setLoaded(true);
 
   function toggle() {
-    setOpen((o) => !o);
-    setLoaded(true);
+    setOpen(!open);
   }
 
   return (
-    <aside className={`dino-drawer ${open ? 'open' : ''}`} aria-label="Dino Run game">
-      <button ref={tabRef} className="dino-tab" onClick={toggle} aria-expanded={open} aria-controls="dino-panel">
+    <aside className={`side-drawer dino-drawer ${open ? 'open' : ''}`} aria-label="Dino Run game">
+      <button ref={tabRef} className="side-tab" onClick={toggle} aria-expanded={open} aria-controls="dino-panel">
         <span aria-hidden="true">🦖</span>
-        <span className="dino-tab-label">{open ? 'Close' : 'Dino Run'}</span>
+        <span className="side-tab-label">{open ? 'Close' : 'Dino Run'}</span>
       </button>
-      <div id="dino-panel" className="dino-panel card" inert={!open}>
-        <div className="dino-header">
+      <div id="dino-panel" className="side-panel card" inert={!open}>
+        <div className="side-header">
           <h2>Dino Run</h2>
           <button className="btn-icon" onClick={toggle} aria-label="Close Dino Run">×</button>
         </div>
@@ -77,11 +78,11 @@ function DinoDrawer() {
             />
           )}
         </div>
-        <p className="dino-help">
+        <p className="side-help">
           <kbd>Space</kbd> / <kbd>↑</kbd> jump · <kbd>↓</kbd> duck · tap to jump on touch screens.
           While open, the keyboard only controls the game. <kbd>Esc</kbd> closes it.
         </p>
-        <p className="dino-credit">
+        <p className="side-credit">
           From <a href="https://github.com/wayou/t-rex-runner" target="_blank" rel="noreferrer">wayou/t-rex-runner</a> (Chromium, BSD-3-Clause)
         </p>
       </div>

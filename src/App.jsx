@@ -1,8 +1,11 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { Wheel } from 'spin-wheel'
 import WheelSettings from './WheelSettings'
 import Confetti from './Confetti'
 import DinoDrawer from './DinoDrawer'
+import DoomDrawer from './DoomDrawer'
+import TetrisDrawer from './TetrisDrawer'
+import ThemeSettings from './ThemeSettings'
 import { DEFAULT_SETTINGS } from './wheelDefaults'
 import { useSpinSound } from './useSpinSound'
 import './App.css'
@@ -67,6 +70,11 @@ function App() {
   const [labels, setLabels] = useState(DEFAULT_LABELS);
   const [result, setResult] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  // Which side drawer game is open ('dino', 'doom', 'tetris' or null). Only one at a time.
+  const [openDrawer, setOpenDrawer] = useState(null);
+  const setDinoOpen = useCallback((open) => setOpenDrawer(open ? 'dino' : null), []);
+  const setDoomOpen = useCallback((open) => setOpenDrawer(open ? 'doom' : null), []);
+  const setTetrisOpen = useCallback((open) => setOpenDrawer(open ? 'tetris' : null), []);
   const wheelImage = useLoadedImage(settings.image);
   const overlayImage = useLoadedImage(settings.overlayImage);
   const spinSound = useSpinSound({
@@ -226,7 +234,11 @@ function App() {
 
       <WheelSettings settings={settings} onChange={updateSetting} onReset={resetSettings} />
 
-      <DinoDrawer />
+      <DinoDrawer open={openDrawer === 'dino'} onOpenChange={setDinoOpen} />
+      <DoomDrawer open={openDrawer === 'doom'} onOpenChange={setDoomOpen} />
+      <TetrisDrawer open={openDrawer === 'tetris'} onOpenChange={setTetrisOpen} />
+
+      <ThemeSettings />
     </main>
   )
 }

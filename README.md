@@ -19,8 +19,16 @@ A customizable spin-the-wheel website. Add your own options, spin, and let the w
 - Congratulations animation with confetti when the wheel lands on a result
 - A **Dino Run** game in a slide-out side drawer (🦖 tab on the right). While it's open, the
   keyboard only controls the game; press <kbd>Esc</kbd> to close it
+- A **Doom-3D** first-person shooter in a wider drawer (👹 tab below Dino Run), with a full-screen
+  button
+- **Tetris** in a third drawer (🧱 tab below Doom). Only one game drawer is open at a time, and
+  Doom and Tetris pause while their drawer is closed
+- A **theme** cog in the top-right corner: background presets, glow / gradient / solid / picture
+  backgrounds, accent colors, glass effect, corner roundness and floating particles. The theme
+  is saved in your browser
 
-Uploaded images and sounds stay in your browser and are cleared when the page reloads.
+Uploaded wheel images and sounds stay in your browser and are cleared when the page reloads.
+A theme background picture is saved with the theme, unless it's too large for browser storage.
 
 ## Packages and projects used
 
@@ -51,6 +59,8 @@ Uploaded images and sounds stay in your browser and are cleared when the page re
 | Project | License | Used for |
 | --- | --- | --- |
 | [wayou/t-rex-runner](https://github.com/wayou/t-rex-runner) (commit `5455bfa`), extracted from [Chromium](https://www.chromium.org)'s offline "T-Rex" game | BSD-3-Clause | The Dino Run game in [`public/dino/`](public/dino/). Its `index.js`, `index.css` and `assets/` are unmodified; `index.html` was adapted for embedding. See [`public/dino/LICENSE`](public/dino/LICENSE) |
+| [Doom-3D](https://github.com/pannilal/Doom) by Praneel Singh (commit `1ca9c39`) | Apache-2.0 | The Doom game in [`public/doom/`](public/doom/), a production build with small embedding changes (hash routing, pause hook). See [`public/doom/README.md`](public/doom/README.md), [`public/doom/mywheel.patch`](public/doom/mywheel.patch) and [`public/doom/LICENSE`](public/doom/LICENSE) |
+| [Tetris JS](https://github.com/nbarkhina/TetrisJS) by Neil Barkhina (commit `773f3e3`) | Apache-2.0 | The Tetris game in [`public/tetris/`](public/tetris/). The game scripts are unmodified; `index.html` was adapted for embedding. It uses jQuery 3.3.1, Bootstrap 4.0.0 (CSS), Rivets 0.9.6 and RequireJS 2.3.6 (all MIT), served from [`public/tetris/vendor/`](public/tetris/vendor/). See [`public/tetris/README.md`](public/tetris/README.md) and [`public/tetris/LICENSE`](public/tetris/LICENSE) |
 | [Inter](https://rsms.me/inter/) font via [Google Fonts](https://fonts.google.com/specimen/Inter) | SIL Open Font License 1.1 | Site typography |
 | [spin-wheel README](https://github.com/CrazyTim/spin-wheel) | MIT | Copied to [`src/spin-wheel-instructions.md`](src/spin-wheel-instructions.md) as an API reference |
 

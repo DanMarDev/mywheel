@@ -107,10 +107,18 @@ function ColorListField({ id, value, onChange }) {
   );
 }
 
-function ImageField({ id, value, onChange }) {
+function ImageField({ id, value, onChange, dataUrl }) {
   function setImage(url) {
     if (value?.startsWith('blob:')) URL.revokeObjectURL(value);
     onChange(url);
+  }
+
+  // Data URLs survive a page reload (e.g. when saved to localStorage), blob URLs don't
+  function upload(file) {
+    if (!dataUrl) return setImage(URL.createObjectURL(file));
+    const reader = new FileReader();
+    reader.onload = () => setImage(reader.result);
+    reader.readAsDataURL(file);
   }
 
   return (
@@ -118,7 +126,7 @@ function ImageField({ id, value, onChange }) {
       {value && <img src={value} alt="" className="image-preview" />}
       <label className="btn btn-ghost btn-small file-button">
         {value ? 'Replace' : 'Upload'}
-        <input id={id} type="file" accept="image/*" onChange={(e) => e.target.files[0] && setImage(URL.createObjectURL(e.target.files[0]))} />
+        <input id={id} type="file" accept="image/*" onChange={(e) => { if (e.target.files[0]) upload(e.target.files[0]); e.target.value = ''; }} />
       </label>
       {value && <button className="btn btn-ghost btn-small" onClick={() => setImage(null)}>Remove</button>}
     </div>
@@ -174,8 +182,8 @@ function SoundField({ id, value, onChange }) {
   );
 }
 
-function SettingField({ field, value, onChange }) {
-  const id = `setting-${field.key}`;
+export function SettingField({ field, value, onChange, idPrefix = 'setting' }) {
+  const id = `${idPrefix}-${field.key}`;
 
   let control;
   switch (field.type) {
@@ -204,7 +212,7 @@ function SettingField({ field, value, onChange }) {
       control = <input id={id} type="checkbox" className="toggle" checked={value} onChange={(e) => onChange(e.target.checked)} />;
       break;
     case 'image':
-      control = <ImageField id={id} value={value} onChange={onChange} />;
+      control = <ImageField id={id} value={value} onChange={onChange} dataUrl={field.dataUrl} />;
       break;
     case 'sound':
       control = <SoundField id={id} value={value} onChange={onChange} />;
