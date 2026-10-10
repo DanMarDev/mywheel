@@ -1003,10 +1003,22 @@ define(["require", "exports"], function (require, exports) {
             else
                 ; //TODO blockcleared.play();
         };
-        MyApp.prototype.requestNextFrame = function () {
+        MyApp.prototype.requestNextFrame = function (now) {
             var app = window.myApp;
-            app.processGamepad();
-            app.gameLoop();
+            // mywheel: the game's timings count frames and were tuned for 60 Hz, so
+            // run the game logic at a fixed 60 ticks per second whatever the display
+            // refresh rate, and paint once per frame. Long gaps (hidden tab) are
+            // capped so the game doesn't race to catch up.
+            var TICK_MS = 1000 / 60;
+            if (app.lastFrameTime === undefined)
+                app.lastFrameTime = now;
+            app.tickBacklog = (app.tickBacklog || 0) + Math.min(now - app.lastFrameTime, 250);
+            app.lastFrameTime = now;
+            while (app.tickBacklog >= TICK_MS) {
+                app.processGamepad();
+                app.gameLoop();
+                app.tickBacklog -= TICK_MS;
+            }
             app.newPaint();
             requestAnimationFrame(app.requestNextFrame);
         };
